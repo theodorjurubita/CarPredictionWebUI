@@ -1,0 +1,90 @@
+﻿<div class="container">
+    <div class="row">
+        <h1 style="text-align: center;">Check car price</h1>
+        <div class="col-md-6 col-md-offset-3" style="margin: 0 auto; width: 100%">
+            <div style="padding: 40px; color: black;">
+                <br/>
+                <form onsubmit="submitForm()">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="machine-model">Model</label>
+                                <select id="machine-model"
+                                        class="form-control">
+                                    <option value="" selected="" disabled="" hidden="">Choose Car Model</option>
+                                    <option value="BMW 3">BMW Seria 3</option>
+                                    <option value="BMW 5">BMW Seria 5</option>
+                                    <option value="BMW 7">BMW Seria 7</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="machine-year">Year</label>
+                                <input id="machine-year"
+                                       class="form-control"
+                                       type="number"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="machine-horse-power">Horse Power</label>
+                                <input id="machine-horse-power"
+                                       class="form-control"
+                                       type="number"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="machine-fuel">Fuel</label>
+                                <select id="machine-fuel"
+                                        class="form-control">
+                                    <option value="" selected="" disabled="" hidden="">Choose Fuel</option>
+                                    <option value="Diesel">Diesel</option>
+                                    <option value="Benzina">Gasoline</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="machine-milage">Milage</label>
+                                <input id="machine-milage"
+                                       class="form-control"
+                                       type="number"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="machine-transmission">Transmission</label>
+                                <select id="machine-transmission"
+                                        class="form-control">
+                                    <option value="" selected="" disabled="" hidden="">Choose Transmission</option>
+                                    <option value="Manuala">Manual</option>
+                                    <option value="Automata">Automatic</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                    <div calss="row">
+                        <div class="col-md-2 col-md-offset-5">
+                            <button class="btn btn-info" type="submit">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    function submitForm() {
+        alert('merge fa');
+    }
+</script>
