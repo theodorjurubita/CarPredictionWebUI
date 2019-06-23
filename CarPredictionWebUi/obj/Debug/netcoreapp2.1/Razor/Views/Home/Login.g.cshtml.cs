@@ -52,7 +52,7 @@ using CarPredictionWebUi.Models;
         public async override global::System.Threading.Tasks.Task ExecuteAsync()
         {
             BeginContext(0, 1130, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("form", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "f6826fe8fea8477ab0ce4a0fbe880c51", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("form", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "29bbf55759924fcb9f9ad6028fcfb5f1", async() => {
                 BeginContext(25, 1098, true);
                 WriteLiteral(@"
     <div class=""container"">

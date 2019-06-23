@@ -1,6 +1,6 @@
 ﻿using CarPredictionWebUi.Models;
 using CarPredictionWebUi.Services;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarPredictionWebUi.Controllers
@@ -10,18 +10,35 @@ namespace CarPredictionWebUi.Controllers
     public class RegressionController : ControllerBase
     {
         public IRegressionService RegressionService;
+        public IMongoService MongoService;
 
-        public RegressionController(IRegressionService regressionService)
+        public RegressionController(IRegressionService regressionService, IMongoService mongoService)
         {
             RegressionService = regressionService;
+            MongoService = mongoService;
         }
 
         [HttpPost]
         [Route("predict")]
+        [Authorize]
         public PredictionResponse Predict([FromBody] PredictionRequest request)
         {
             var response = RegressionService.Predict(request);
-            return response.Result;
+            var result = response.Result;
+
+            var carModel = new CarModel
+            {
+                Fuel = request.Fuel,
+                HorsePower = request.HorsePower,
+                Mileage = request.Mileage,
+                Model = request.Model,
+                Transmission = request.Transmission,
+                Year = request.Year,
+                Price = result.Price
+            };
+
+            MongoService.InsertCarInfo(carModel);
+            return result;
         }
     }
 }

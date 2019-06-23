@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using CarPredictionWebUi.Helpers;
 using CarPredictionWebUi.Extenssions;
+using CarPredictionWebUi.Options;
 using CarPredictionWebUi.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace CarPredictionWebUi
 {
@@ -33,9 +32,28 @@ namespace CarPredictionWebUi
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            //MongoDb service
+            services.Configure<MongoDbOptions>(Configuration.GetSection("MongoDb"));
+
+            services.AddSingleton<IMongoService, MongoService>(provider =>
+            {
+                var mongoOptions = provider.GetService<IOptions<MongoDbOptions>>().Value;
+                return new MongoService(mongoOptions.DatabaseUrl, mongoOptions.DatabaseName,
+                    mongoOptions.CollectionName);
+            });
+
+            //User service
+            services.AddScoped<IUserService, UserService>();
+
+            services.AddAuthentication("BasicAuthentication")
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+
+            //Regression service
             services.AddHttpClient<IRegressionService, RegressionService>(c => c.InitializeRegressionService());
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,6 +72,14 @@ namespace CarPredictionWebUi
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
+
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {

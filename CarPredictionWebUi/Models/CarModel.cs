@@ -1,7 +1,15 @@
-﻿namespace CarPredictionWebUi.Models
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
+namespace CarPredictionWebUi.Models
 {
     public class CarModel
     {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        [BsonElement("_id")]
+        public string Id { get; set; }
+
         public string Model { get; set; }
 
         public int Year { get; set; }

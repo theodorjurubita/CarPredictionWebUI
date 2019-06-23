@@ -9,7 +9,7 @@ namespace CarPredictionWebUi.Controllers
     public class HomeController : Controller
     {
         //Todo: apiul de login cu parola hashuita
-        //Todo: apiul de mongo
+        //Todo: apiul de mongo -> Done
         //Todo: delete car si tabel cu boostrap pt paginare
 
         public IRegressionService RegressionService;
