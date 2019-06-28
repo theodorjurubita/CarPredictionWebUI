@@ -1,46 +1,116 @@
-﻿@model IEnumerable<PredictionRequest>
+﻿@model List<CarModel>
 <div class="row" id="authorized" hidden>
     <div class="col-md-12">
-        <table class="table">
+        <table class="table table-striped table-bordered" id="cars">
             <thead>
-            <tr>
-                <th>Model</th>
-                <th>Year</th>
-                <th>Horse Power</th>
-                <th>Fuel</th>
-                <th>Mileage</th>
-                <th>Transmission</th>
-                <th>Price</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in Model)
-            {
                 <tr>
-                    <td>@item.Model</td>
-                    <td>@item.Year</td>
-                    <td>@item.HorsePower</td>
-                    <td>@item.Fuel</td>
-                    <td>@item.Mileage</td>
-                    <td>@item.Transmission</td>
+                    <th>Model</th>
+                    <th>Year</th>
+                    <th>Horse Power</th>
+                    <th>Fuel</th>
+                    <th>Mileage</th>
+                    <th>Transmission</th>
+                    <th>Price</th>
+                    <th>Delete</th>
                 </tr>
-            }
-            </tbody>
+            </thead>
         </table>
     </div>
 </div>
 
-    <h1 id="notEnoughRights" hidden>You don't have the rights to access this page. Firstly you have to be logged in.</h1>
+<h1 id="notEnoughRights" hidden>You don't have the rights to access this page. Firstly you have to be logged in.</h1>
 
+@section Scripts
+{
 
-<script>
-    function getUser() {
-        return window.localStorage.getItem("UserAuth") !== null;
-    }
+    <script>
+        function getUser() {
+            return window.localStorage.getItem("UserAuth") !== null;
+        }
 
-    if (getUser()) {
-        document.getElementById("authorized").removeAttribute("hidden");
-    } else {
-        document.getElementById("notEnoughRights").removeAttribute("hidden");
-    }
-</script>
+        if (getUser()) {
+            document.getElementById("authorized").removeAttribute("hidden");
+        } else {
+            document.getElementById("notEnoughRights").removeAttribute("hidden");
+        }
+    </script>
+
+    <script>
+
+        $(document).ready(function () {
+            var carsTable = $('#cars').DataTable({
+                ajax: {
+                    url: "https://localhost:44391/api/cars",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "model",
+                        render: function (data) {
+                            return "<td>" + data + "</td>";
+                        }
+                    },
+                    {
+                        data: "year",
+                        render: function (data) {
+                            return "<td>" + data + "</td>";
+                        }
+                    },
+                    {
+                        data: "horsePower",
+                        render: function (data) {
+                            return "<td>" + data + "</td>";
+                        }
+                    },
+                    {
+                        data: "fuel",
+                        render: function (data) {
+                            return "<td>" + data + "</td>";
+                        }
+                    },
+                    {
+                        data: "mileage",
+                        render: function (data) {
+                            return "<td>" + data + "</td>";
+                        }
+                    },
+                    {
+                        data: "transmission",
+                        render: function (data) {
+                            return "<td>" + data + "</td>";
+                        }
+                    },
+                    {
+                        data: "price",
+                        render: function (data) {
+                            return "<td>" + data + "</td>";
+                        }
+                    },
+                    {
+                        data: "",
+                        render: function (data, type, car) {
+                            return "<button class='btn-link js-delete' data-car-id='" + car.id + "'>Delete</button>";
+                        }
+                    }
+                ]
+            });
+        $("#cars").on("click",
+            ".js-delete",
+            function () {
+                var button = $(this);
+                bootbox.confirm("Are you sure you want to delete this car?",
+                    function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: "/api/cars/" + button.attr("data-car-id"),
+                                method: "DELETE",
+                                success: function () {
+                                    carsTable.rows(button.parents("tr")).remove().draw();
+                                }
+                            });
+                        }
+                    });
+                });
+        });
+    </script>
+}

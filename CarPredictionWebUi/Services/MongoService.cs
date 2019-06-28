@@ -26,7 +26,7 @@ namespace CarPredictionWebUi.Services
         {
             var cars = new List<CarModel>();
 
-            var allDocuments = await CarCollection.FindAsync(new BsonDocument());
+            var allDocuments = CarCollection.Find(new BsonDocument());
             await allDocuments.ForEachAsync(doc => cars.Add(doc));
 
             return cars;
@@ -38,6 +38,11 @@ namespace CarPredictionWebUi.Services
             var allUsers = UsersCollection.Find(user => user.Username == userName);
             await allUsers.ForEachAsync(doc => users.Add(doc));
             return users.FirstOrDefault();
+        }
+
+        public void DeleteCar(string carId)
+        {
+            CarCollection.DeleteOne(car => car.Id == carId);
         }
     }
 }
