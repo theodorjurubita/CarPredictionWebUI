@@ -1,4 +1,4 @@
-﻿<form onsubmit="login()">
+﻿<form>
     <div class="container">
         <div class="login-form">
             <div class="main-div">
@@ -19,7 +19,7 @@
                                    placeholder="Password"
                                    required/>
                         </div>
-                        <button class="btn btn-primary" type="submit">Login</button>
+                        <button class="btn btn-primary" onclick="login()">Login</button>
                     </div>
                 </div>
             </div>
@@ -30,8 +30,29 @@
     function login() {
         var username = document.getElementById("inputUsername").value;
         var password = document.getElementById("inputPassword").value;
-        alert(username + " " + password);
-        //TODO: make the backend call for login
+        var credentials = { "username": username, "password": password };
+        var uri = "/api/users/authenticate";
+        $.ajax({
+            xhrFields: {
+                withCredentials: true
+            },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', 'Basic ' + btoa(username + ':' + password));
+            },
+            type: "POST",
+            accepts: "application/json",
+            url: uri,
+            contentType: "application/json",
+            data: JSON.stringify(credentials),
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert("Something went wrong!");
+            },
+            success: function (result) {
+                window.localStorage.setItem("UserAuth", result);
+                console.log(window.localStorage.getItem('UserAuth'));
+                window.location.href = 'https://localhost:44391/';
+            }
+        });
     }
 </script>
 

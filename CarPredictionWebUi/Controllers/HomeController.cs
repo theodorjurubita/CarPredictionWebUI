@@ -54,6 +54,11 @@ namespace CarPredictionWebUi.Controllers
             return View();
         }
 
+        public IActionResult Logout()
+        {
+            return View();
+        }
+
         public IActionResult CarsManagement()
         {
             IEnumerable<PredictionRequest> cars = new List<PredictionRequest>

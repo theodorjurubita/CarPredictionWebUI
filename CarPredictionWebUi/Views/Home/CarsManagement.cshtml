@@ -1,44 +1,46 @@
 ﻿@model IEnumerable<PredictionRequest>
-@{ var loggedIn = true; }
-@if (loggedIn)
-{
-    <div class="row">
-        <div class="col-md-12">
-            <table class="table">
-                <thead>
+<div class="row" id="authorized" hidden>
+    <div class="col-md-12">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Model</th>
+                <th>Year</th>
+                <th>Horse Power</th>
+                <th>Fuel</th>
+                <th>Mileage</th>
+                <th>Transmission</th>
+                <th>Price</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
                 <tr>
-                    <th>Model</th>
-                    <th>Year</th>
-                    <th>Horse Power</th>
-                    <th>Fuel</th>
-                    <th>Mileage</th>
-                    <th>Transmission</th>
-                    <th>Price</th>
+                    <td>@item.Model</td>
+                    <td>@item.Year</td>
+                    <td>@item.HorsePower</td>
+                    <td>@item.Fuel</td>
+                    <td>@item.Mileage</td>
+                    <td>@item.Transmission</td>
                 </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>@item.Model</td>
-                            <td>@item.Year</td>
-                            <td>@item.HorsePower</td>
-                            <td>@item.Fuel</td>
-                            <td>@item.Mileage</td>
-                            <td>@item.Transmission</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+            }
+            </tbody>
+        </table>
     </div>
-}
-else
-{
-    <h1>You don't have the rights to access this page. Firstly you have to be logged in.</h1>
-}
+</div>
+
+    <h1 id="notEnoughRights" hidden>You don't have the rights to access this page. Firstly you have to be logged in.</h1>
 
 
 <script>
-    @loggedIn = window.localStorage.getItem('Auth') !== null;
+    function getUser() {
+        return window.localStorage.getItem("UserAuth") !== null;
+    }
+
+    if (getUser()) {
+        document.getElementById("authorized").removeAttribute("hidden");
+    } else {
+        document.getElementById("notEnoughRights").removeAttribute("hidden");
+    }
 </script>
