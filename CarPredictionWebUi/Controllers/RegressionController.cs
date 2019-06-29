@@ -20,7 +20,6 @@ namespace CarPredictionWebUi.Controllers
 
         [HttpPost]
         [Route("predict")]
-        [Authorize]
         public PredictionResponse Predict([FromBody] PredictionRequest request)
         {
             var response = RegressionService.Predict(request);

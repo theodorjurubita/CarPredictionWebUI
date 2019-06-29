@@ -12,6 +12,6 @@
 
         public string Transmission { get; set; }
         
-        public float Mileage { get; set; }
+        public int Mileage { get; set; }
     }
 }

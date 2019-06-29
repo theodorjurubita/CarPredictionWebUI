@@ -85,6 +85,31 @@
 
 <script>
     function submitForm() {
-        alert('merge fa');
+        var model = document.getElementById("machine-model").value;
+        var year = document.getElementById("machine-year").value;
+        var horsePower = document.getElementById("machine-horse-power").value;
+        var fuel = document.getElementById("machine-fuel").value;
+        var mileage = document.getElementById("machine-milage").value;
+        var transmission = document.getElementById("machine-transmission").value;
+
+        var predictionRequest = {
+            "model": model, "year": year, "horsePower":horsePower,
+            "fuel": fuel, "mileage":mileage, "transmission":transmission
+        };
+
+        var uri = "/api/regression/predict";
+        $.ajax({
+            type: "POST",
+            accepts: "application/json",
+            url: uri,
+            contentType: "application/json",
+            data: JSON.stringify(predictionRequest),
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert("Something went wrong!");
+            },
+            success: function (result) {
+                console.log(result);
+            }
+        });
     }
 </script>
