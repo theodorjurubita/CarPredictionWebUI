@@ -4,13 +4,14 @@
         <div class="col-md-6 col-md-offset-3" style="margin: 0 auto; width: 100%">
             <div style="padding: 40px; color: black;">
                 <br/>
-                <form onsubmit="submitForm()">
+                <form id="myForm" onsubmit="submitForm()">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="machine-model">Model</label>
                                 <select id="machine-model"
-                                        class="form-control">
+                                        class="form-control"
+                                        required>
                                     <option value="" selected="" disabled="" hidden="">Choose Car Model</option>
                                     <option value="BMW 3">BMW Seria 3</option>
                                     <option value="BMW 5">BMW Seria 5</option>
@@ -22,8 +23,11 @@
                             <div class="form-group">
                                 <label for="machine-year">Year</label>
                                 <input id="machine-year"
-                                       class="form-control"
-                                       type="number"/>
+                                       class="form-control test"
+                                       type="number"
+                                       required
+                                       min="2007"
+                                       max="2018"/>
                             </div>
                         </div>
                     </div>
@@ -33,14 +37,18 @@
                                 <label for="machine-horse-power">Horse Power</label>
                                 <input id="machine-horse-power"
                                        class="form-control"
-                                       type="number"/>
+                                       type="number"
+                                       min="100"
+                                       max="700"
+                                       required/>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="machine-fuel">Fuel</label>
                                 <select id="machine-fuel"
-                                        class="form-control">
+                                        class="form-control"
+                                        required>
                                     <option value="" selected="" disabled="" hidden="">Choose Fuel</option>
                                     <option value="Diesel">Diesel</option>
                                     <option value="Benzina">Gasoline</option>
@@ -54,14 +62,18 @@
                                 <label for="machine-milage">Milage</label>
                                 <input id="machine-milage"
                                        class="form-control"
-                                       type="number"/>
+                                       type="number"
+                                       required
+                                       min="20000"
+                                       max="350000"/>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="machine-transmission">Transmission</label>
                                 <select id="machine-transmission"
-                                        class="form-control">
+                                        class="form-control"
+                                        required>
                                     <option value="" selected="" disabled="" hidden="">Choose Transmission</option>
                                     <option value="Manuala">Manual</option>
                                     <option value="Automata">Automatic</option>
@@ -76,15 +88,39 @@
                         </div>
                     </div>
                 </form>
+
             </div>
         </div>
     </div>
 </div>
 
+<div class="modal" tabindex="-1" role="dialog" id="predictionView">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 id="predictedPrice"></h4>
+            </div>
+            <div class="modal-body">
+                <div id="chartContainer" style="height: 400px; width: 100%;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-
+<script src="~/lib/jquery/dist/jquery.js"></script>
 <script>
+
+    'use strict';
+
+
     function submitForm() {
+        debugger;
         var model = document.getElementById("machine-model").value;
         var year = document.getElementById("machine-year").value;
         var horsePower = document.getElementById("machine-horse-power").value;
@@ -93,23 +129,108 @@
         var transmission = document.getElementById("machine-transmission").value;
 
         var predictionRequest = {
-            "model": model, "year": year, "horsePower":horsePower,
-            "fuel": fuel, "mileage":mileage, "transmission":transmission
+            "model": model,
+            "year": year,
+            "horsePower": horsePower,
+            "fuel": fuel,
+            "mileage": mileage,
+            "transmission": transmission
         };
 
-        var uri = "/api/regression/predict";
-        $.ajax({
-            type: "POST",
-            accepts: "application/json",
-            url: uri,
-            contentType: "application/json",
-            data: JSON.stringify(predictionRequest),
-            error: function (jqXHR, textStatus, errorThrown) {
-                alert("Something went wrong!");
-            },
-            success: function (result) {
-                console.log(result);
-            }
-        });
+        //var uri = "/api/regression/predict";
+        //$.ajax({
+        //    type: "POST",
+        //    accepts: "application/json",
+        //    url: uri,
+        //    contentType: "application/json",
+        //    data: JSON.stringify(predictionRequest),
+        //    error: function (jqXHR, textStatus, errorThrown) {
+        //        alert("Something went wrong!");
+        //    },
+        //    success: function (result) {
+        //        console.log(result);
+        //    }
+        //});
+        var listaMea = [];
+        var predictedPrice = {};
+
+        fetch('/api/cars/DataPoints/' + model,
+                {
+                    method: 'get'
+                })
+            .then((data) => {
+                return data.json();
+            })
+            .then((data) => {
+                listaMea = data;
+            });
+
+        fetch('/api/regression/predict',
+                {
+                    method: 'post',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify(predictionRequest)
+                })
+            .then((data) => {
+                return data.json();
+            })
+            .then((data) => {
+                predictedPrice = data;
+                listaMea.push({
+                    "x": year,
+                    "y": predictedPrice.price,
+                    "indexLabel": "Predicted",
+                    "indexColor": "tomato",
+                    "markerType": "cross",
+                    "markerColor": "tomato"
+                });
+
+                var chart = new CanvasJS.Chart("chartContainer",
+                    {
+                        theme: "light2", // "light1", "light2", "dark1", "dark2"
+                        animationEnabled: true,
+                        title: {
+                            text: "Car distribution for " + predictionRequest.model
+                        },
+                        axisX: {
+                            title: "Year",
+                            interval: 1,
+                            valueFormatString: "#"
+                        },
+                        axisY: {
+                            title: "Price (in Euro)",
+                            interval: 5000,
+                            valueFormatString: "€#0"
+                        },
+                        data: [
+                            {
+                                type: "scatter",
+                                color: "black",
+                                markerSize: 12,
+                                yValueFormatString: "€###.#",
+                                XValueFormatString: "#",
+                                dataPoints: listaMea
+                            }
+                        ]
+                    });
+                
+                chart.render();
+                document.getElementById("predictedPrice")
+                    .innerHTML =
+                    "Your predicted price for the car is: <b>" + predictedPrice.price.toFixed(2) + " €</b>";
+                $('#predictionView').modal();
+            })
+            .catch
+            ((error) => {
+                console.error(error);
+            });
     }
+
+
+    $('#myForm').submit((e) => {
+        e.preventDefault();
+    });
+
 </script>

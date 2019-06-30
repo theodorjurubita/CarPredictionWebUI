@@ -13,5 +13,7 @@ namespace CarPredictionWebUi.Services
         Task<User> GetUser(string username);
 
         void DeleteCar(string carId);
+
+        Task<List<CarModel>> GetCarsByModel(string model);
     }
 }

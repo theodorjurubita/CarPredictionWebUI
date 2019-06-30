@@ -26,6 +26,18 @@ namespace CarPredictionWebUi.Controllers
             var cars = MongoService.GetCars();
             return cars.Result;
         }
+        
+        [Route("DataPoints/{carModel}")]
+        public IEnumerable<ChartDataPoint> GetDataPoints(string carModel)
+        {
+            var cars = MongoService.GetCarsByModel(carModel).Result.Select(c=> new ChartDataPoint
+            {
+                X = c.Year,
+                Y = c.Price
+            }).OrderBy(c=>c.X);
+
+            return cars;
+        }
 
         [HttpDelete]
         [Route("{id}")]

@@ -32,6 +32,14 @@ namespace CarPredictionWebUi.Services
             return cars;
         }
 
+        public async Task<List<CarModel>> GetCarsByModel(string model)
+        {
+            var cars = new List<CarModel>();
+            var carsByModel = CarCollection.Find(car => car.Model == model);
+            await carsByModel.ForEachAsync(doc => cars.Add(doc));
+            return cars;
+        }
+
         public async Task<User> GetUser(string userName)
         {
             var users = new List<User>();
