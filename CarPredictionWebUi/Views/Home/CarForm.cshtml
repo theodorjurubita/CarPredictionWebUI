@@ -38,8 +38,8 @@
                                 <input id="machine-horse-power"
                                        class="form-control"
                                        type="number"
-                                       min="100"
-                                       max="700"
+                                       min="105"
+                                       max="610"
                                        required/>
                             </div>
                         </div>
@@ -65,7 +65,7 @@
                                        type="number"
                                        required
                                        min="20000"
-                                       max="350000"/>
+                                       max="360000"/>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -105,6 +105,33 @@
             </div>
             <div class="modal-body">
                 <div id="chartContainer" style="height: 400px; width: 100%;"></div>
+                <br/>
+                <div id="statistics">
+                    <table>
+                        <thead>
+
+                        <tr>
+                            <th>Statistic Indicator</th>
+                        </tr>
+                        </thead>
+                        <tr>
+                            <td>R2 Score</td>
+                            <td style="float: right;" id="rScore"></td>
+                        </tr>
+                        <tr>
+                            <td>Mean</td>
+                            <td style="float: right;" id="mean"></td>
+                        </tr>
+                        <tr>
+                            <td>Root mean squared error</td>
+                            <td style="float: right;" id="rmse"></td>
+                        </tr>
+                        <tr>
+                            <td>Error percentage</td>
+                            <td style="float: right;" id="error"></td>
+                        </tr>
+                    </table>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -118,9 +145,8 @@
 
     'use strict';
 
-
+    
     function submitForm() {
-        debugger;
         var model = document.getElementById("machine-model").value;
         var year = document.getElementById("machine-year").value;
         var horsePower = document.getElementById("machine-horse-power").value;
@@ -135,6 +161,10 @@
             "fuel": fuel,
             "mileage": mileage,
             "transmission": transmission
+        };
+
+        var statisticsRequest = {
+            "Model": model
         };
 
         //var uri = "/api/regression/predict";
@@ -153,6 +183,7 @@
         //});
         var listaMea = [];
         var predictedPrice = {};
+        var statistics = {};
 
         fetch('/api/cars/DataPoints/' + model,
                 {
@@ -164,6 +195,19 @@
             .then((data) => {
                 listaMea = data;
             });
+        debugger;
+        fetch('http://localhost:5000/statistics',
+            {
+                method: 'post',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(statisticsRequest)
+            }).then((data) => {
+            return data.json();
+        }).then((data) => {
+            statistics = data;
+        });
 
         fetch('/api/regression/predict',
                 {
@@ -181,10 +225,8 @@
                 listaMea.push({
                     "x": year,
                     "y": predictedPrice.price,
-                    "indexLabel": "Predicted",
-                    "indexColor": "tomato",
                     "markerType": "cross",
-                    "markerColor": "tomato"
+                    "markerColor": "red"
                 });
 
                 var chart = new CanvasJS.Chart("chartContainer",
@@ -201,7 +243,7 @@
                         },
                         axisY: {
                             title: "Price (in Euro)",
-                            interval: 5000,
+                            interval: 10000,
                             valueFormatString: "€#0"
                         },
                         data: [
@@ -209,25 +251,28 @@
                                 type: "scatter",
                                 color: "black",
                                 markerSize: 12,
-                                yValueFormatString: "€###.#",
-                                XValueFormatString: "#",
+                                yValueFormatString: "€####",
+                                xValueFormatString: "#",
                                 dataPoints: listaMea
                             }
                         ]
                     });
-                
+
                 chart.render();
                 document.getElementById("predictedPrice")
                     .innerHTML =
                     "Your predicted price for the car is: <b>" + predictedPrice.price.toFixed(2) + " €</b>";
+                document.getElementById("rScore").innerHTML = `<b>${parseFloat(statistics.R2Score).toFixed(2)}</b>`;
+                document.getElementById("mean").innerHTML = `<b>${parseFloat(statistics.Mean).toFixed(2)}</b>`;
+                document.getElementById("rmse").innerHTML = `<b>${parseFloat(statistics.RMSE).toFixed(2)}</b>`;
+                document.getElementById("error").innerHTML = `<b>${parseFloat(statistics.Error).toFixed(2)} %</b>`;
                 $('#predictionView').modal();
             })
             .catch
             ((error) => {
-                console.error(error);
+                window.swal("Prediction", "Something went wrong on the server side!", "error");
             });
     }
-
 
     $('#myForm').submit((e) => {
         e.preventDefault();

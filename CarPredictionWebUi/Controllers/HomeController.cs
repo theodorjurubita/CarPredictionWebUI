@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using CarPredictionWebUi.Models;
 using CarPredictionWebUi.Services;
@@ -25,7 +23,7 @@ namespace CarPredictionWebUi.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return View("CarForm");
         }
 
         public IActionResult CarForm()

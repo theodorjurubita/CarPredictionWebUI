@@ -1,4 +1,4 @@
-﻿<form>
+﻿<form id="loginForm" onsubmit="login()">
     <div class="container">
         <div class="login-form">
             <div class="main-div">
@@ -17,15 +17,17 @@
                                    class="form-control"
                                    type="password"
                                    placeholder="Password"
-                                   required/>
+                                   required
+                                   minLength="3"/>
                         </div>
-                        <button class="btn btn-primary" onclick="login()">Login</button>
+                        <button class="btn btn-info" type="submit">Login</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </form>
+<script src="~/lib/jquery/dist/jquery.js"></script>
 <script>
     function login() {
         var username = document.getElementById("inputUsername").value;
@@ -36,7 +38,7 @@
             xhrFields: {
                 withCredentials: true
             },
-            beforeSend: function (xhr) {
+            beforeSend: function(xhr) {
                 xhr.setRequestHeader('Authorization', 'Basic ' + btoa(username + ':' + password));
             },
             type: "POST",
@@ -44,16 +46,23 @@
             url: uri,
             contentType: "application/json",
             data: JSON.stringify(credentials),
-            error: function (jqXHR, textStatus, errorThrown) {
-                alert("Something went wrong!");
+            error: function(jqXHR, textStatus, errorThrown) {
+                window.swal("Authentication", "Wrong username or password!", "error");
             },
-            success: function (result) {
+            success: function(result) {
                 window.localStorage.setItem("UserAuth", result);
-                console.log(window.localStorage.getItem('UserAuth'));
-                window.location.href = 'https://localhost:44391/';
+                window.swal("Authentication", "You successfully logged in as '" + username + "'", "success")
+                    .then(() => {
+                        window.location.href = 'https://localhost:44391/';
+                    });
+                //alert("Successfully logged in as "+username);
             }
         });
     }
+
+    $('#loginForm').submit((e) => {
+        e.preventDefault();
+    });
 </script>
 
 <style>

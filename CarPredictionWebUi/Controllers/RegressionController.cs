@@ -36,7 +36,7 @@ namespace CarPredictionWebUi.Controllers
                 Price = result.Price
             };
 
-            //MongoService.InsertCarInfo(carModel);
+            MongoService.InsertCarInfo(carModel);
             return result;
         }
     }

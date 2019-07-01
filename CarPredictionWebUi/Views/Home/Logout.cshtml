@@ -1,4 +1,10 @@
-﻿<script>
+﻿<script src="~/lib/sweetalert.min.js"></script>
+
+<script>
     window.localStorage.removeItem("UserAuth");
-    window.location.href = "https://localhost:44391";
+    swal("Authentication", "You successfully logged out", "success")
+        .then(() => {
+            window.location.href = 'https://localhost:44391/';
+        });
+    //window.location.href = "https://localhost:44391";
 </script>
