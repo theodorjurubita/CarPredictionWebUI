@@ -15,7 +15,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
-    <PackageReference Include="MongoDB.Driver" Version="2.8.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.19.0" />
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="4.5.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
   </ItemGroup>
